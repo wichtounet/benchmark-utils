@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import bb.science.FormatUtil;
@@ -70,7 +69,7 @@ import bb.util.Benchmark.Params;
  * @version 1.0
  */
 public class Benchs {
-    private final List<NamedBenchmark> benchmarks = new ArrayList<NamedBenchmark>();
+    private final Collection<NamedBenchmark> benchmarks = new ArrayList<NamedBenchmark>(8);
 
     private final String title;
 
@@ -101,11 +100,7 @@ public class Benchs {
      * @param folder The folder to create the image charts into.
      */
     public void setFolder(String folder) {
-        if (!folder.endsWith("/")) {
-            folder = folder + '/';
-        }
-
-        this.folder = folder;
+        this.folder = folder.endsWith("/") ? folder : folder + '/';
     }
 
     /**
@@ -247,7 +242,7 @@ public class Benchs {
      *
      * @return The Prefix for the results.
      */
-    private Prefix computeOptimalPrefix(Collection<NamedBenchmark> benchmarks) {
+    private static Prefix computeOptimalPrefix(Iterable<NamedBenchmark> benchmarks) {
         Prefix maxPrefix = null;
 
         for (NamedBenchmark benchmark : benchmarks) {
@@ -309,7 +304,7 @@ public class Benchs {
      * @param benchmarks The benchmarks of the base chart.
      */
     private void generateSubChart(String title, Collection<NamedBenchmark> benchmarks) {
-        List<NamedBenchmark> benchs = new ArrayList<NamedBenchmark>();
+        Collection<NamedBenchmark> benchs = new ArrayList<NamedBenchmark>(benchmarks.size());
 
         for (NamedBenchmark benchmark : benchmarks) {
             double mean = benchmark.getMean();

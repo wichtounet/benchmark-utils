@@ -28,8 +28,15 @@ import java.util.Random;
  * @author Baptiste Wicht
  * @version 1.0
  */
-public class BenchUtils {
-    private static final Random random = new Random();
+public final class BenchUtils {
+    private static final Random RANDOM = new Random();
+
+    /**
+     * Utility class, not instantiable. 
+     */
+    private BenchUtils() {
+        throw new AssertionError();
+    }
 
     /**
      * Create a collection containing the given number of random integers.
@@ -48,7 +55,7 @@ public class BenchUtils {
         Collection<Integer> integers = new ArrayList<Integer>(size);
 
         for (int i = 0; i < size; i++) {
-            integers.add(random.nextInt());
+            integers.add(RANDOM.nextInt());
         }
 
         return integers;
@@ -88,7 +95,7 @@ public class BenchUtils {
             }
         }
 
-        Collections.shuffle(list, random);
+        Collections.shuffle(list, RANDOM);
 
         return list;
     }
