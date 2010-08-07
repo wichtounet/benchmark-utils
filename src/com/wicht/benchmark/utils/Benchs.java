@@ -43,19 +43,19 @@ import bb.util.Benchmark.Params;
  * <p/>
  * <blockquote><pre>
  *      Benchs benchs = new Benchs("Title of the benchmark");
- * <p/>
+ *
  *      benchs.bench("First method", new Runnable(){
  *          public void run() {
  *              method1();
  *          }
  *      });
- * <p/>
+ *
  *      benchs.bench("Second method", new Runnable(){
  *          public void run() {
  *              method2();
  *          }
  *      });
- * <p/>
+ * 
  *      benchs.generateCharts();
  * </pre></blockquote>
  * <p/>
