@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import bb.science.FormatUtil;
@@ -197,6 +199,36 @@ public class Benchs {
         benchmarks.add(new NamedBenchmark(benchmark, name));
     }
 
+    public void printResults(){
+        Prefix prefix = computeOptimalPrefix(benchmarks);
+
+        List<NamedBenchmark> sorted = new ArrayList<NamedBenchmark>(benchmarks);
+
+        Collections.sort(sorted);
+
+        double min = sorted.get(0).getMean();
+
+        System.out.println("-------------------");
+        System.out.println(title + " results : ");
+        System.out.println("Best : " + sorted.get(0).getTitle() + " : " + getExactMean(min, prefix) + prefix.getSymbol() + "s");
+        System.out.println("All results : ");
+
+        for(NamedBenchmark bench : sorted){
+            System.out.println("\t" + bench.getTitle() + " : " +
+                    getExactMean(bench.getMean(), prefix) + prefix.getSymbol() + "s (+" + ((bench.getMean() / min) - 1) * 100 + "%)");
+        }
+
+        System.out.println("-------------------");
+    }
+
+    private double getExactMean(double mean, Prefix prefix) {
+        BigDecimal exactMean = BigDecimal.valueOf(mean);
+
+        exactMean = exactMean.scaleByPowerOfTen(-prefix.getExponent());
+
+        return exactMean.doubleValue();
+    }
+
     /**
      * Generate the charts of the results. This method generate a sub chart if it's interesting. The time prefix will be
      * automatically computed from the results.
@@ -271,11 +303,7 @@ public class Benchs {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         for (NamedBenchmark benchmark : benchmarks) {
-            BigDecimal exactMean = BigDecimal.valueOf(benchmark.getMean());
-
-            exactMean = exactMean.scaleByPowerOfTen(-prefix.getExponent());
-
-            dataset.addValue(exactMean.doubleValue(), "", benchmark.getTitle());
+            dataset.addValue(getExactMean(benchmark.getMean(), prefix), "", benchmark.getTitle());
         }
 
         JFreeChart chart = ChartFactory.createBarChart(title.replace("-sub", ""), "Methods", data, dataset, PlotOrientation.VERTICAL, false, false, false);
@@ -352,7 +380,7 @@ public class Benchs {
      *
      * @author Baptiste Wicht
      */
-    private static final class NamedBenchmark {
+    private static final class NamedBenchmark implements Comparable<NamedBenchmark> {
         private final Benchmark benchmark;
         private final String title;
 
@@ -385,6 +413,10 @@ public class Benchs {
          */
         private double getMean() {
             return benchmark.getMean();
+        }
+
+        public int compareTo(NamedBenchmark o) {
+            return Double.compare(getMean(), o.getMean());
         }
     }
 }
